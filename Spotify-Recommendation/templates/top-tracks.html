@@ -43,7 +43,7 @@
         <div class="track">
             <img src="{{ track['album']['images'][0]['url'] }}" alt="{{ track['name'] }} Cover">
             <p><a href="{{ track['external_urls'] }}" target="_blank">{{ track['name'] }}</a> by {{ track['artists'] }}<br>{{ track['album_name'] }}</p>
-            <!-- <p>{{ track['name'] }} by {{ track['artists'][0]['name'] }}</p> -->
+            
         </div>
     {% endfor %}
 </body>

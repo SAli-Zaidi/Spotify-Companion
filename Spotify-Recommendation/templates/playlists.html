@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Playlists</title>
+    <title>Your Playlists</title>
     <style>
         body {
             background-color: #191414;
@@ -11,9 +11,9 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px; /* Add padding to improve visibility */
-            color: #FFFFFF; /* Set text color to white */
-            font-family: 'Circular', sans-serif; /* Use a font similar to Spotify's Circular */
+            padding: 20px;
+            color: #FFFFFF;
+            font-family: 'Circular', sans-serif;
         }
 
         #heading {
@@ -28,10 +28,20 @@
         }
 
         .playlist img {
-            width: 150px; /* Adjust as needed */
-            height: 150px; /* Adjust as needed */
+            width: 150px;
+            height: 150px;
             object-fit: cover;
             border-radius: 8px;
+        }
+
+        .playlist a {
+            color: #1DB954;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .playlist a:hover {
+            color: #147D4E;
         }
     </style>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Circular:wght@300&display=swap">
@@ -41,8 +51,10 @@
 
     {% for playlist in playlists %}
         <div class="playlist">
-            <img src="{{ playlist['image_url'] }}" alt="{{ playlist['name'] }} Cover">
-            <p>{{ playlist['name'] }}</p>
+            <a href="{{ playlist['external_urls']['spotify'] }}" target="_blank">
+                <img src="{{ playlist['image_url'] }}" alt="{{ playlist['name'] }} Cover">
+                <p>{{ playlist['name'] }}</p>
+            </a>
         </div>
     {% endfor %}
 </body>
