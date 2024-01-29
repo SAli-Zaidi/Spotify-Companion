@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify App</title>
+    <style>
+        body {
+            background-color: #191414;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+            color: #FFFFFF; /* Set text color to white */
+            font-family: 'Circular', sans-serif; /* Use a font similar to Spotify's Circular */
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 10px 20px;
+            text-decoration: none;
+            background-color: #1DB954; /* Spotify green color */
+            color: #FFFFFF;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #147D4E; /* Darker shade on hover */
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Spotify App</h1>
+    <a href='/login'>Login with Spotify</a>
+</body>
+</html>

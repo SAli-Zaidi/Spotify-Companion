@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommended Tracks</title>
+    <style>
+        body {
+            background-color: #191414;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px; /* Add padding to improve visibility */
+            color: #FFFFFF; /* Set text color to white */
+            font-family: 'Circular', sans-serif; /* Use a font similar to Spotify's Circular */
+        }
+
+        #heading {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .track {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .track img {
+            width: 150px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .track a {
+            color: #1DB954; /* Spotify green color for links */
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .track a:hover {
+            color: #147D4E; /* Darker shade on hover */
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Circular:wght@300&display=swap">
+</head>
+<body>
+    <h1 id="heading">Recommended Tracks</h1>
+
+    {% for recommendation in recommended_tracks %}
+        <div class="track">
+            <img src="{{ recommendation['album_cover'] }}" alt="{{recommendation['name']}} Cover">
+            <p><a href="{{ recommendation['external_url'] }}" target="_blank">{{ recommendation['name'] }}</a> by {{ recommendation['artists'] }}<br>{{ recommendation['album_name'] }}</p>
+
+        </div>
+    {% endfor %}
+</body>
+</html>

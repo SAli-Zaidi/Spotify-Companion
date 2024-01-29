@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Played Tracks</title>
+    <style>
+        body {
+            background-color: #191414;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px; /* Add padding to improve visibility */
+            color: #FFFFFF; /* Set text color to white */
+            font-family: 'Circular', sans-serif; /* Use a font similar to Spotify's Circular */
+        }
+
+        #heading {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .track {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .track img {
+            width: 150px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Circular:wght@300&display=swap">
+</head>
+<body>
+    <h1 id="heading">Your Top Played Tracks</h1>
+
+    {% for track in top_tracks %}
+        <div class="track">
+            <img src="{{ track['album']['images'][0]['url'] }}" alt="{{ track['name'] }} Cover">
+            <p><a href="{{ track['external_urls'] }}" target="_blank">{{ track['name'] }}</a> by {{ track['artists'] }}<br>{{ track['album_name'] }}</p>
+            <!-- <p>{{ track['name'] }} by {{ track['artists'][0]['name'] }}</p> -->
+        </div>
+    {% endfor %}
+</body>
+</html>

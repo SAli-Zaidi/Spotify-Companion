@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlists</title>
+    <style>
+        body {
+            background-color: #191414;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 20px; /* Add padding to improve visibility */
+            color: #FFFFFF; /* Set text color to white */
+            font-family: 'Circular', sans-serif; /* Use a font similar to Spotify's Circular */
+        }
+
+        #heading {
+            text-align: center;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .playlist {
+            text-align: center;
+            margin: 10px;
+        }
+
+        .playlist img {
+            width: 150px; /* Adjust as needed */
+            height: 150px; /* Adjust as needed */
+            object-fit: cover;
+            border-radius: 8px;
+        }
+    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Circular:wght@300&display=swap">
+</head>
+<body>
+    <h1 id="heading">Your Playlists</h1>
+
+    {% for playlist in playlists %}
+        <div class="playlist">
+            <img src="{{ playlist['image_url'] }}" alt="{{ playlist['name'] }} Cover">
+            <p>{{ playlist['name'] }}</p>
+        </div>
+    {% endfor %}
+</body>
+</html>
