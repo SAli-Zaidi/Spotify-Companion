@@ -25,11 +25,18 @@
         .track {
             text-align: center;
             margin: 10px;
+            width: calc(33.33% - 20px); /* Adjust to create rows of three */
+            max-width: 250px; /* Limit maximum width */
+        }
+        .track a {
+            color: #1DB954; /* Spotify green color for links */
+            text-decoration: none;
+            transition: color 0.3s ease;
         }
 
         .track img {
-            width: 150px; /* Adjust as needed */
-            height: 150px; /* Adjust as needed */
+            width: 100%; /* Adjust to fit container */
+            height: auto; /* Maintain aspect ratio */
             object-fit: cover;
             border-radius: 8px;
         }
@@ -42,9 +49,11 @@
     {% for track in top_tracks %}
         <div class="track">
             <img src="{{ track['album']['images'][0]['url'] }}" alt="{{ track['name'] }} Cover">
-            <p><a href="{{ track['external_urls'] }}" target="_blank">{{ track['name'] }}</a> by {{ track['artists'] }}<br>{{ track['album_name'] }}</p>
-            
+            <p><a href="{{ track['external_urls']['spotify'] }}" target="_blank">{{ track['name'] }}</a> by {% for artist in track['artists'] %}{{ artist['name'] }}{% if not loop.last %}, {% endif %}{% endfor %}<br>{{ track['album']['name'] }}</p>
         </div>
+        {% if loop.index % 3 == 0 %}
+            <div style="width: 100%;"></div> <!-- Add a line break after every three tracks -->
+        {% endif %}
     {% endfor %}
 </body>
 </html>

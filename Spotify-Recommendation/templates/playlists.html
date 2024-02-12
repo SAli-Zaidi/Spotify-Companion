@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Your Playlists</title>
+    <title>My Playlists</title>
     <style>
         body {
             background-color: #191414;
@@ -11,9 +11,9 @@
             flex-wrap: wrap;
             justify-content: center;
             align-items: flex-start;
-            padding: 20px;
-            color: #FFFFFF;
-            font-family: 'Circular', sans-serif;
+            padding: 20px; /* Add padding to improve visibility */
+            color: #FFFFFF; /* Set text color to white */
+            font-family: 'Circular', sans-serif; /* Use a font similar to Spotify's Circular */
         }
 
         #heading {
@@ -25,11 +25,13 @@
         .playlist {
             text-align: center;
             margin: 10px;
+            width: calc(33.33% - 20px); /* Adjust to create rows of three */
+            max-width: 250px; /* Limit maximum width */
         }
 
         .playlist img {
-            width: 150px;
-            height: 150px;
+            width: 100%; /* Adjust to fit container */
+            height: auto; /* Maintain aspect ratio */
             object-fit: cover;
             border-radius: 8px;
         }
@@ -47,15 +49,16 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Circular:wght@300&display=swap">
 </head>
 <body>
-    <h1 id="heading">Your Playlists</h1>
+    <h1 id="heading">My Playlists</h1>
 
     {% for playlist in playlists %}
         <div class="playlist">
-            <a href="{{ playlist['external_urls']['spotify'] }}" target="_blank">
-                <img src="{{ playlist['image_url'] }}" alt="{{ playlist['name'] }} Cover">
-                <p>{{ playlist['name'] }}</p>
-            </a>
+            <img src="{{ playlist['image_url'] }}" alt="{{ playlist['name'] }} Cover">
+            <p><a href="{{ playlist['external_urls']['spotify'] }}" target="_blank">{{ playlist['name'] }}</a></p>
         </div>
+        {% if loop.index % 3 == 0 %}
+            <div style="width: 100%;"></div> <!-- Add a line break after every three playlists -->
+        {% endif %}
     {% endfor %}
 </body>
 </html>

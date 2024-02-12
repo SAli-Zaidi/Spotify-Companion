@@ -25,11 +25,13 @@
         .track {
             text-align: center;
             margin: 10px;
+            width: calc(33.33% - 20px); /* Adjust to create rows of three */
+            max-width: 250px; /* Limit maximum width */
         }
 
         .track img {
-            width: 150px; /* Adjust as needed */
-            height: 150px; /* Adjust as needed */
+            width: 100%; /* Adjust to fit container */
+            height: auto; /* Maintain aspect ratio */
             object-fit: cover;
             border-radius: 8px;
         }
@@ -55,6 +57,10 @@
             <p><a href="{{ recommendation['external_url'] }}" target="_blank">{{ recommendation['name'] }}</a> by {{ recommendation['artists'] }}<br>{{ recommendation['album_name'] }}</p>
 
         </div>
+        {% if loop.index % 3 == 0 %}
+            <div style="width: 100%;"></div> <!-- Add a line break after every three tracks -->
+        {% endif %}
     {% endfor %}
+    
 </body>
 </html>

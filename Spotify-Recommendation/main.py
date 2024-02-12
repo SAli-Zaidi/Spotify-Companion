@@ -21,14 +21,18 @@ REDIRECT_URI = 'http://localhost:5000/callback'
 AUTH_URL = 'https://accounts.spotify.com/authorize'
 TOKEN_URL = 'https://accounts.spotify.com/api/token'
 API_BASE_URL = 'https://api.spotify.com/v1/'
-SCOPE='user-library-read user-top-read playlist-modify-public playlist-read-private user-modify-playback-state'
+SCOPE='user-read-currently-playing user-library-read user-top-read playlist-modify-public playlist-read-private user-modify-playback-state'
 
 SHORT_TERM = 'short_term'
 MID_TERM = 'medium_term'
 LONG_TERM = 'long_term'
 
 sp_oauth = SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, scope=SCOPE)
-
+sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
+                                                client_secret=CLIENT_SECRET,
+                                                redirect_uri=REDIRECT_URI,
+                                                scope=SCOPE,
+                                                cache_path=".cashe"))
 @app.route('/')
 def index():
     # return "Welcome to Spotify Recommendation <a href='/login'>Login with Spotify</a>"
@@ -36,51 +40,30 @@ def index():
 
 @app.route('/login')
 def login():
-    
-    # params = {
-    #     'client_id' : CLIENT_ID,
-    #     'response_type': 'code',
-    #     'scope': SCOPE,
-    #     'redirect_uri': REDIRECT_URI,
-    #     # 'show_dialog': True
-    #     #omit later ^
-    # }
 
     auth_url = sp_oauth.get_authorize_url()
-    print("HELLO THIS IS LOGIN")
+    
     # auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
 
     return redirect(auth_url)
 
-sp = spotipy.Spotify(auth_manager=SpotifyOAuth(client_id=CLIENT_ID,
-                                               client_secret=CLIENT_SECRET,
-                                               redirect_uri=REDIRECT_URI,
-                                               scope=SCOPE,
-                                              cache_path=".cashe"))
+
 @app.route('/callback')
 def callback():
     if 'error' in request.args:
         return jsonify({"error": request.args['error']})
     
     if 'code' in request.args:
-        req_body = {
-            'code': request.args['code'],
-            'grant_type': 'authorization_code',
-            'redirect_uri': REDIRECT_URI,
-            'client_id': CLIENT_ID,
-            'client_secret': CLIENT_SECRET
-        }
-
-        response = requests.post(TOKEN_URL, data=req_body)
-        token_info = response.json()
-
+        token_info = sp_oauth.get_access_token(request.args['code'])
+        
         session['access_token'] = token_info['access_token']
         session['refresh_token'] = token_info['refresh_token']
-        session['expires_at'] = datetime.now().timestamp() + token_info['expires_in']
-    token_info = sp_oauth.get_access_token(request.args['code'])
+        session['expires_at'] = token_info['expires_at']
+        
+        return redirect('/main')
+    else:
+        return jsonify({"error": "Authorization code not found in request."})
 
-
-    return redirect('/main')
 
 
 @app.route('/main')
@@ -89,6 +72,7 @@ def main():
 
 @app.route('/top-songs')
 def top_songs():
+
     if 'access_token' not in session:
         return redirect('/login')
 
@@ -97,48 +81,39 @@ def top_songs():
 
     sp = spotipy.Spotify(auth=session['access_token'])  # Create Spotify API client with access token
 
-    top_tracks_short = sp.current_user_top_tracks(limit=5, offset=0, time_range=MID_TERM)
-    track_ids = [track['id'] for track in top_tracks_short['items']]
-    track_name = [track['name'] for track in top_tracks_short['items']]
-    track_url = [track['external_urls'] for track in top_tracks_short['items']]
-    print(track_url)
-    # track_artist_ids = []
-    # for track in top_tracks_short['items']:
-    #     artist_ids = [artist['id'] for artist in track['artists']]
-    #     track_artist_ids.append(artist_ids)
-    #     print(track_artist_ids)
-    # artist_ids = [artist_id for sublist in track_artist_ids for artist_id in sublist]
-    # artist_ids = artist_ids.pop()
-    # print(artist_ids)
-
-    
-    top_tracks = sp.current_user_top_tracks(limit=10, time_range=LONG_TERM)
+    top_tracks = sp.current_user_top_tracks(limit=10, time_range='long_term')
 
     return render_template('top-tracks.html', top_tracks=top_tracks['items'])
-    
 
+@app.route('/current-songs')
+def current_song():
+    if 'access_token' not in session:
+        return redirect('/login')
+
+    if datetime.now().timestamp() > session['expires_at']:
+        return redirect('/refresh-token')
+    
+    sp = spotipy.Spotify(auth=session['access_token'])
+
+    # Get the user's current playing song
+    current_track = sp.current_user_playing_track()
+
+    # Check if the user is currently playing a track
+    if current_track is None:
+        return "No track is currently playing."
+
+    # Extract track details
+    track_name = current_track['item']['name']
+    artists = ", ".join([artist['name'] for artist in current_track['item']['artists']])
+    album_name = current_track['item']['album']['name']
+    album_cover_url = current_track['item']['album']['images'][0]['url']
+    track_url = current_track['item']['external_urls']['spotify']
+
+    return render_template('current-songs.html', track_name=track_name, artists=artists, album_name=album_name, album_cover_url=album_cover_url, track_url=track_url)
+    
 @app.route('/recommended-songs')
 def recommended_songs():
-    # if 'access_token' not in session:
-    #     return redirect('/login')
-
-    # if datetime.now().timestamp() > session['expires_at']:
-    #     return redirect('/refresh-token')
-
-    # sp = spotipy.Spotify(auth=session['access_token'])  # Create Spotify API client with access token
-
-    # top_tracks_short = sp.current_user_top_tracks(limit=5, offset=0, time_range=MID_TERM)
-    # track_ids = [track['id'] for track in top_tracks_short['items']]
-    
-    # recommended_songs = sp.recommendations(seed_tracks=track_ids, country = "CA")
-    
-    # formatted_recommendations = []
-    # for track in recommended_songs['tracks']:
-    #     artists = ', '.join([artist['name'] for artist in track['artists']])
-    #     formatted_recommendations.append(f"{track['name']} by {artists}")
-
-    # return render_template('recommended-tracks.html', recommended_tracks=formatted_recommendations)
-
+   
     if 'access_token' not in session:
         return redirect('/login')
 
@@ -166,6 +141,8 @@ def recommended_songs():
 
 
     return render_template('recommended-tracks.html', recommended_tracks=formatted_recommendations)
+
+
 # @app.route('/new-playlist')
 # def new_playlists():
 
