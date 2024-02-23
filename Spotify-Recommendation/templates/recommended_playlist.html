@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommended Songs</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #191414;
+      color: #FFFFFF;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .recommended-tracks {
+      margin-bottom: 20px;
+    }
+
+    .track {
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+    }
+
+    input[type="checkbox"] {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #1DB954;
+      color: #FFFFFF;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #383838;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Recommended Songs</h1>
+
+  <div class="recommended-tracks">
+    {% if recommended_tracks %}
+      {% for track in recommended_tracks %}
+        <div class="track">
+          <input
+            type="checkbox"
+            name="selected_tracks[]"
+            value="{{ track['id'] }}"
+            id="{{ track['id'] }}"
+          >
+          <label for="{{ track['id'] }}">
+            {{ track['name'] }} by {{ track['artists'] }}
+          </label>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No recommended songs available.</p>
+    {% endif %}
+  </div>
+
+  <form id="playlist-form" method="post" style="display: none;">
+    <input type="hidden" name="playlist_id" value="{{ selected_playlist_id }}">
+    <input type="hidden" name="selected_tracks" value="">
+  </form>
+
+  <button id="add-to-playlist-button">Add to Playlist</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Attach click event listener to "Add to Playlist" button
+      const addToPlaylistButton = document.getElementById('add-to-playlist-button');
+      addToPlaylistButton.addEventListener('click', function() {
+        // Collect selected track IDs
+        const selectedTracks = Array.from(document.querySelectorAll('.recommended-tracks input:checked')).map(function(checkbox) {
+          return checkbox.value;
+        }).join(',');
+        // Set selected tracks value in form
+        const form = document.getElementById('playlist-form');
+        form.querySelector('[name="selected_tracks"]').value = selectedTracks;
+        // Submit form to redirect to confirmation page
+        form.action = '/add-to-playlist-confirmation';
+        form.submit();
+      });
+    });
+  </script>
+</body>
+</html>

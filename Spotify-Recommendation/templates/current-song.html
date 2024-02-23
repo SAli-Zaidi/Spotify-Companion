@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Listening Song</title>
+    <style>
+        body {
+            background-color: #191414;
+            color: #FFFFFF;
+            font-family: 'Circular', sans-serif;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .main-song,
+        .recommended-songs {
+            padding: 0 20px;
+        }
+
+        .main-song img {
+            width: 250px;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .main-song h1,
+        .recommended-songs h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .main-song a,
+        .recommended-songs a {
+            color: #1DB954;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .main-song a:hover,
+        .recommended-songs a:hover {
+            color: #147D4E;
+        }
+
+        .recommended-songs ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recommended-songs li {
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .recommended-songs img {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .recommended-songs h3 {
+            margin: 0;
+        }
+
+        .recommended-songs p {
+            margin: 0;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="recommended-songs">
+        <h2>Recommended Songs</h2>
+        <ul id="recommended-tracks">
+            <!-- Recommended songs will be populated dynamically -->
+        </ul>
+    </div>
+
+    <div class="main-song">
+        <h1>Current Listening Song</h1>
+        <img id="album-cover" alt="Album Cover">
+        <h2 id="track-name"></h2>
+        <p id="artists"></p>
+        <p id="album-name"></p>
+        <p><a id="track-url" href="#" target="_blank">Listen on Spotify</a></p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.2/socket.io.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const socket = io();
+
+            // Send request for current song data
+            socket.emit('current_song_request');
+
+            // Handle response for current song data
+            socket.on('current_song_response', function(data) {
+                if (data.error) {
+                    // Handle error
+                    console.error(data.error);
+                    return;
+                }
+
+                // Update UI with current song data
+                document.getElementById('album-cover').src = data.album_cover_url;
+                document.getElementById('track-name').textContent = data.track_name;
+                document.getElementById('artists').textContent = data.artists;
+                document.getElementById('album-name').textContent = 'Album: ' + data.album_name;
+                document.getElementById('track-url').href = data.track_url;
+
+                // Update recommended songs
+                const recommendedTracks = data.recommended_tracks;
+                const recommendedTracksList = document.getElementById('recommended-tracks');
+                recommendedTracksList.innerHTML = '';
+                recommendedTracks.forEach(function(track) {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <img src="${track.album_cover_url}" alt="${track.name} Cover">
+                        <div>
+                            <h3><a href="${track.track_url}" target="_blank">${track.name}</a></h3>
+                            <p>by ${track.artists}</p>
+                            <p>Album: ${track.album_name}</p>
+                        </div>
+                    `;
+                    recommendedTracksList.appendChild(li);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
