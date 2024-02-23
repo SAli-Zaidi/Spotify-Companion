@@ -1,7 +1,7 @@
 # Spotify Companion
 
 ## Overview
-Spotify Companion is a web-based application that integrates with the Spotify API to provide users with personalized song recommendations, access to top tracks, playlist management, and real-time updates on currently playing songs. This README provides an overview of the app's features, how to set it up locally, and how to contribute to the project.
+Spotify Companion is a web-based application that integrates with the Spotify API to provide users with personalized song recommendations, access to top tracks, playlist management, and real-time updates on currently playing songs.
 
 ## Features
 ### User Authentication
