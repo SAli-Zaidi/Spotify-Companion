@@ -92,7 +92,7 @@ def top_songs():
 
 def emit_current_song():
     while True:
-        sp = spotipy.Spotify(auth=session.get('access_token'))  # Moved inside the loop to reinitialize with a new access token
+        sp = spotipy.Spotify(auth=session.get('access_token'))
         if 'access_token' not in session:
             socketio.emit('current_song_response', {'error': 'User not authenticated'})
             time.sleep(10)
@@ -338,8 +338,7 @@ def add_to_playlist_confirmation():
                 'artists': ', '.join([artist['name'] for artist in track_info['artists']])
             }
             new_tracks.append(track_details)
-
-        # Render the "Add to Playlist Confirmation" page with the list of newly added tracks
+          
         return render_template('add_to_playlist_confirmation.html', new_tracks=new_tracks)
     except Exception as e:
         # Handle error and return appropriate message
