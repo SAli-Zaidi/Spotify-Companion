@@ -48,8 +48,6 @@ def index():
 def login():
 
     auth_url = sp_oauth.get_authorize_url()
-    
-    # auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
 
     return redirect(auth_url)
 
